@@ -1,0 +1,157 @@
+<!-- Earn With Task Mini App v5: all pages, same dark neon design (frontend only, demo data) -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* hide Blogger chrome (watermark, navbar, header, footer, sidebar) */
+#navbar-iframe,.navbar,#navbar,.Attribution,#Attribution1,.header-outer,#header,.footer-outer,#footer,.sidebar,.sidebar-outer,.post-footer,.post-header,.blog-pager,h3.post-title,.post-share-buttons,.comments,#comments,.blog-feeds,.post-feeds,.post-labels,.post-author,.status-msg-wrap{display:none!important}
+html,body{background:#070B14!important}
+.content-outer,.content-inner,.main-inner,.main-inner .column-center-inner,.main-inner .columns,.region-inner,.post-outer,.post-body,.post,.date-outer,.date-posts,.widget,.main-inner .column-center-outer{margin:0!important;padding:0!important;max-width:none!important;width:100%!important;background:none!important;box-shadow:none!important;border:0!important}
+:root{--bg:#070B14;--card:#0E1526;--card2:#131C33;--line:#1B2640;--ink:#F1F5FF;--mute:#8693B0;--cy:#1FA2FF;--cy2:#2D6BFF;--glow:rgba(31,162,255,.45)}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--ink);font:400 14px/1.4 Inter,'Hind Siliguri',system-ui,sans-serif;max-width:480px;margin:0 auto;padding:0 14px calc(96px + env(safe-area-inset-bottom,0px));min-height:100vh}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+.ic{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+header{display:flex;align-items:center;gap:10px;padding:16px 0 14px}
+.av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--cy),#7B5CFF);display:grid;place-items:center;font-weight:700}
+.me{flex:1;line-height:1.2}.me b{display:block;font-weight:700;font-size:15px}
+.me span{display:flex;align-items:center;gap:4px;color:var(--cy);font-weight:600;font-size:13px}.me .ic{width:14px;height:14px}
+.sq{width:36px;height:36px;border-radius:10px;background:var(--card2);border:1px solid var(--line);display:grid;place-items:center}
+.banner{position:relative;overflow:hidden;border-radius:16px;padding:18px 16px;min-height:128px;background:linear-gradient(120deg,#0B2C7A,#1646C9 55%,#1FA2FF 120%);display:flex;flex-direction:column;justify-content:center;gap:6px}
+.banner h2{font-size:20px;font-weight:800;max-width:62%;position:relative}
+.banner p{font-size:12.5px;opacity:.85;max-width:60%;position:relative}
+.banner .go{align-self:flex-start;margin-top:4px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:6px 12px;font-size:12.5px;font-weight:600;position:relative}
+.banner .coin{position:absolute;right:16px;top:50%;transform:translateY(-50%);width:80px;height:80px;filter:drop-shadow(0 8px 16px rgba(0,0,0,.4))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:12px}
+.t{display:flex;justify-content:space-between;font-size:12.5px;color:var(--mute);margin-bottom:8px}.t b{color:var(--ink)}
+.bar{height:6px;background:var(--line);border-radius:6px;overflow:hidden}
+.bar div{height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,var(--cy2),var(--cy));box-shadow:0 0 10px var(--glow);transition:width .8s}
+h3{font-size:14px;font-weight:700;margin:20px 0 10px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{position:relative;overflow:hidden;text-align:left;border-radius:14px;padding:12px;min-height:84px;border:1px solid var(--line);display:flex;flex-direction:column;justify-content:flex-end}
+.tile b{font-size:14.5px;font-weight:700;display:block}.tile small{color:var(--mute);font-size:11.5px;max-width:62%;display:block}
+.art{position:absolute;right:-6px;top:10px;width:54px;height:54px;border-radius:15px;display:grid;place-items:center;transform:rotate(-8deg)}
+.art .ic{width:28px;height:28px;color:#fff}
+.g1{background:linear-gradient(160deg,#17214A,var(--card))}.g1 .art{background:linear-gradient(135deg,#5B3DF5,#1FA2FF)}
+.g2{background:linear-gradient(160deg,#0F2B27,var(--card))}.g2 .art{background:linear-gradient(135deg,#0FA968,#6EE7A8)}
+.g3{background:linear-gradient(160deg,#2E1F10,var(--card))}.g3 .art{background:linear-gradient(135deg,#FF7A1A,#FFC53D)}
+.g4{background:linear-gradient(160deg,#0E2830,var(--card))}.g4 .art{background:linear-gradient(135deg,#0E9AA7,#4DE1D2)}
+.list{background:var(--card);border:1px solid var(--line);border-radius:14px;margin-top:12px}
+.row{display:flex;align-items:center;gap:12px;padding:12px 14px;width:100%;text-align:left}
+.row+.row{border-top:1px solid var(--line)}
+.row .i{width:38px;height:38px;border-radius:10px;background:var(--card2);display:grid;place-items:center;color:var(--cy);flex:none}
+.row>div{flex:1;line-height:1.25}.row small{display:block;color:var(--mute);font-size:12px}
+.row em{font-style:normal;font-weight:700;color:var(--cy)}
+.empty{padding:22px;text-align:center;color:var(--mute);font-size:13px}
+.btn{width:100%;margin-top:12px;padding:13px;border-radius:12px;font-weight:700;background:linear-gradient(90deg,var(--cy2),var(--cy));box-shadow:0 6px 18px var(--glow);display:flex;justify-content:center;align-items:center;gap:8px}
+.btn:disabled{background:var(--card2);box-shadow:none;color:var(--mute)}
+.sm{padding:7px 14px;border-radius:9px;font-size:12.5px;font-weight:700;background:linear-gradient(90deg,var(--cy2),var(--cy));width:auto;margin:0;box-shadow:none}
+.top{display:flex;align-items:center;gap:10px;padding:16px 0 4px}
+.top h1{font-size:18px;font-weight:800}
+.back{width:36px;height:36px;border-radius:10px;background:var(--card2);border:1px solid var(--line);display:grid;place-items:center}
+.seg{display:flex;gap:6px;margin-top:12px}
+.seg button{flex:1;padding:9px;border-radius:10px;background:var(--card);border:1px solid var(--line);color:var(--mute);font-weight:600;font-size:13px}
+.seg button.on{color:#fff;background:var(--cy);border-color:var(--cy);box-shadow:0 0 12px var(--glow)}
+.big{font-size:30px;font-weight:800;color:var(--cy)}
+label{display:block;font-size:12.5px;color:var(--mute);margin:12px 0 6px}
+input,select{width:100%;padding:12px;border-radius:10px;background:var(--card2);border:1px solid var(--line);outline:0}
+input:focus,select:focus{border-color:var(--cy)}
+.copy{display:flex;gap:8px}.copy input{flex:1;font-size:12.5px}
+.note{font-size:12px;color:var(--mute);margin-top:10px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.stats .card{margin:0}.stats b{font-size:22px;font-weight:800;display:block}.stats small{color:var(--mute);font-size:12px}
+nav{position:fixed;left:0;right:0;bottom:0;background:rgba(7,11,20,.92);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:8px 10px calc(8px + env(safe-area-inset-bottom,0px))}
+nav div{display:flex;gap:4px;max-width:480px;margin:0 auto}
+nav button{flex:1;color:var(--mute);font-size:11px;font-weight:500;display:flex;flex-direction:column;align-items:center;gap:4px;padding:7px 0;border-radius:12px;border:1px solid transparent}
+nav button.on{color:var(--cy);background:rgba(31,162,255,.1);border-color:var(--cy);box-shadow:0 0 14px var(--glow)}
+#toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--card2);border:1px solid var(--line);padding:9px 14px;border-radius:10px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s;white-space:nowrap}
+#toast.on{opacity:1}
+button:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
+</style>
+
+<div id="app"></div>
+<nav><div id="nav"></div></nav>
+<div id="toast" role="status"></div>
+
+<script>
+(function(){
+  // DEMO DATA ONLY. Real values must come from your server after verifying Telegram initData.
+  var MIN = 1000;
+  var S = {name:'', id:'', points:0, today:0, refs:0, refPts:0, tx:[],
+    tasks:[{t:'চ্যানেলে জয়েন করুন',p:50},{t:'পোস্ট শেয়ার করুন',p:30},{t:'অ্যাপ রিভিউ দিন',p:80}]};
+  var tg = window.Telegram && window.Telegram.WebApp;
+  if (tg){ tg.ready(); tg.expand();
+    tg.setHeaderColor && tg.setHeaderColor('#070B14'); tg.setBackgroundColor && tg.setBackgroundColor('#070B14');
+    var u = tg.initDataUnsafe && tg.initDataUnsafe.user;
+    if (u){ S.name = ((u.first_name||'')+' '+(u.last_name||'')).trim(); S.id = String(u.id||''); } }
+
+  var bn = function(n){return Number(n).toLocaleString('bn-BD')};
+  var P = {
+    home:'M4 11l8-7 8 7v9H4z', ads:'M3 5h18v14H3zM10 9l5 3-5 3z', task:'M5 12l4 4 10-10',
+    wallet:'M3 6h18v13H3zM3 10h18', user:'M12 4a4 4 0 100 8 4 4 0 000-8M4 20c0-4 4-6 8-6s8 2 8 6',
+    ref:'M9 5a3 3 0 100 6 3 3 0 000-6M3 19c0-3 3-5 6-5s6 2 6 5M18 8v6M15 11h6', out:'M12 4v12M7 11l5 5 5-5M5 20h14',
+    back:'M15 5l-7 7 7 7', bell:'M6 17V11a6 6 0 0112 0v6l2 2H4zM10 21h4', plus:'M12 5v14M5 12h14',
+    help:'M12 3a9 9 0 100 18 9 9 0 000-18M9.5 9.5a2.5 2.5 0 114 2c-1 .7-1.5 1-1.5 2.5M12 17h.01',
+    doc:'M8 4h8l3 3v13H5V7zM9 12h6M9 16h4', copy:'M8 8h11v12H8zM5 16V4h11', chat:'M4 5h16v11H9l-5 4z'};
+  var ic = function(k,c){return '<svg class="ic" viewBox="0 0 24 24"'+(c?' style="'+c+'"':'')+'><path d="'+P[k]+'"/></svg>'};
+  var toast = function(m){var t=document.getElementById('toast');t.textContent=m;t.className='on';setTimeout(function(){t.className=''},1800)};
+  var soon = 'এই অংশ পরের ধাপে সার্ভারের সঙ্গে যুক্ত হবে';
+
+  var txRows = function(a){return a.length ? '<div class="list">'+a.map(function(t){
+    return '<div class="row"><span class="i">'+ic(t.out?'out':'plus')+'</span><div>'+t.title+'<small>'+t.time+'</small></div><em>'+(t.out?'-':'+')+bn(t.pts)+'</em></div>';
+  }).join('')+'</div>' : '<div class="list"><div class="empty">এখনো কোনো লেনদেন নেই।</div></div>'};
+  var top = function(title,back){return '<div class="top">'+(back?'<button class="back" data-nav="'+back+'" aria-label="পেছনে">'+ic('back')+'</button>':'')+'<h1>'+title+'</h1></div>'};
+  var pct = function(){return Math.min(100, Math.round(S.points/MIN*100))};
+  var goal = function(){return '<div class="card"><div class="t"><span>উত্তোলনের লক্ষ্য</span><b>'+bn(pct())+'%</b></div><div class="bar"><div style="width:'+pct()+'%"></div></div></div>'};
+  var tile = function(g,go,k,b,s){return '<button class="tile '+g+'" data-nav="'+go+'"><span class="art">'+ic(k)+'</span><b>'+b+'</b><small>'+s+'</small></button>'};
+
+  var V = {
+    home:function(){return '<header><div class="av">'+(S.name?S.name[0].toUpperCase():'E')+'</div><div class="me"><b>'+(S.name||'Earn With Task')+'</b><span>'+ic('wallet')+bn(S.points)+'</span></div><button class="sq" data-soon aria-label="নোটিফিকেশন">'+ic('bell')+'</button></header>'
+      +'<section class="banner"><h2>প্রতিদিন বোনাস জিতুন!</h2><p>ডেইলি বোনাস নিন, টাস্ক করুন, পয়েন্ট বাড়ান।</p><button class="go" data-soon>বোনাস নিন ›</button><svg class="coin" viewBox="0 0 80 80"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE27A"/><stop offset="1" stop-color="#F59E0B"/></linearGradient></defs><circle cx="40" cy="40" r="34" fill="url(#g)"/><circle cx="40" cy="40" r="26" fill="none" stroke="#B45309" stroke-opacity=".5" stroke-width="3"/><path d="M40 24l9 12-9 20-9-20z" fill="#fff" fill-opacity=".85"/></svg></section>'
+      +goal()+'<h3>আয় করুন</h3><div class="grid">'+tile('g1','ads','ads','বিজ্ঞাপন দেখুন','দেখে পয়েন্ট পান')+tile('g2','tasks','task','টাস্ক','কাজ শেষে রিওয়ার্ড')+tile('g3','referral','ref','রেফারেল','বন্ধুকে ইনভাইট')+tile('g4','withdraw','out','উত্তোলন','আবেদন করুন')+'</div>'
+      +'<h3>সাম্প্রতিক লেনদেন</h3>'+txRows(S.tx.slice(0,3))},
+
+    ads:function(){return top('বিজ্ঞাপন দেখুন')+'<div class="card" style="text-align:center"><div class="big">'+bn(S.today)+' / '+bn(10)+'</div><div class="note" style="margin:4px 0 0">আজকের দেখা বিজ্ঞাপন</div><div class="bar" style="margin-top:14px"><div style="width:'+(S.today*10)+'%"></div></div></div>'
+      +'<button class="btn" data-soon>'+ic('ads')+'বিজ্ঞাপন দেখুন</button><p class="note">বিজ্ঞাপন শেষ পর্যন্ত দেখলে সার্ভার যাচাই করে পয়েন্ট যোগ করবে।</p>'},
+
+    tasks:function(){return top('টাস্ক')+'<div class="list">'+S.tasks.map(function(k){
+      return '<div class="row"><span class="i">'+ic('task')+'</span><div>'+k.t+'<small>+'+bn(k.p)+' পয়েন্ট</small></div><button class="btn sm" data-soon>শুরু করুন</button></div>'}).join('')+'</div>'},
+
+    referral:function(){var link='https://t.me/earnwithtask2bot?start=ref_'+(S.id||'0000');
+      return top('রেফারেল প্রোগ্রাম','home')+'<div class="stats"><div class="card"><b>'+bn(S.refs)+'</b><small>আমন্ত্রিত বন্ধু</small></div><div class="card"><b>'+bn(S.refPts)+'</b><small>রেফারেল থেকে পয়েন্ট</small></div></div>'
+      +'<div class="card"><label style="margin-top:0">আপনার রেফারেল লিংক</label><div class="copy"><input id="rl" readonly value="'+link+'"><button class="btn sm" id="cp">কপি</button></div></div>'
+      +'<h3>কীভাবে কাজ করে</h3><div class="list"><div class="row"><span class="i">'+ic('copy')+'</span><div>লিংক শেয়ার করুন<small>বন্ধুকে আপনার লিংক পাঠান</small></div></div><div class="row"><span class="i">'+ic('user')+'</span><div>বন্ধু জয়েন করবে<small>বট চালু করলে গণনা শুরু</small></div></div><div class="row"><span class="i">'+ic('wallet')+'</span><div>পয়েন্ট পাবেন<small>যাচাইয়ের পর যোগ হবে</small></div></div></div>'},
+
+    wallet:function(){var f=S.f||'all',a=S.tx.filter(function(t){return f==='all'||(f==='out')===!!t.out});
+      return top('ওয়ালেট')+'<div class="card" style="text-align:center"><div class="note" style="margin:0">মোট ব্যালেন্স</div><div class="big">'+bn(S.points)+' পয়েন্ট</div></div>'+goal()
+      +'<button class="btn" data-nav="withdraw">'+ic('out')+'উত্তোলন করুন</button>'
+      +'<div class="seg"><button data-f="all" class="'+(f==='all'?'on':'')+'">সব</button><button data-f="in" class="'+(f==='in'?'on':'')+'">আয়</button><button data-f="out" class="'+(f==='out'?'on':'')+'">উত্তোলন</button></div>'+txRows(a)},
+
+    withdraw:function(){var ok=S.points>=MIN;
+      return top('উত্তোলন','wallet')+goal()+'<div class="card"><label style="margin-top:0">পেমেন্ট মাধ্যম</label><select id="m"><option>বিকাশ</option><option>নগদ</option><option>রকেট</option></select>'
+      +'<label>অ্যাকাউন্ট নম্বর</label><input id="no" inputmode="numeric" placeholder="01XXXXXXXXX"><label>পয়েন্ট</label><input id="am" inputmode="numeric" placeholder="ন্যূনতম '+bn(MIN)+'">'
+      +'<p class="note">অ্যাডমিন যাচাইয়ের পর পেমেন্ট করা হবে।'+(ok?'':' ন্যূনতম '+bn(MIN)+' পয়েন্ট জমলে আবেদন করতে পারবেন।')+'</p></div>'
+      +'<button class="btn" id="sub"'+(ok?'':' disabled')+'>আবেদন জমা দিন</button>'},
+
+    profile:function(){return top('প্রোফাইল')+'<div class="card" style="display:flex;gap:12px;align-items:center"><div class="av" style="width:52px;height:52px;font-size:20px">'+(S.name?S.name[0].toUpperCase():'E')+'</div><div><b>'+(S.name||'Earn With Task ব্যবহারকারী')+'</b><div class="note" style="margin:2px 0 0">ID: '+(S.id||'—')+'</div></div></div>'
+      +'<div class="list"><button class="row" data-nav="referral"><span class="i">'+ic('ref')+'</span><div>রেফারেল প্রোগ্রাম</div></button><button class="row" data-soon><span class="i">'+ic('chat')+'</span><div>সাপোর্ট<small>সমস্যা জানান</small></div></button><button class="row" data-soon><span class="i">'+ic('doc')+'</span><div>নিয়মাবলি ও গোপনীয়তা</div></button><button class="row" data-soon><span class="i">'+ic('help')+'</span><div>কীভাবে কাজ করে</div></button></div>'}
+  };
+
+  var NAV = [['home','হোম','home'],['ads','বিজ্ঞাপন','ads'],['tasks','টাস্ক','task'],['wallet','ওয়ালেট','wallet'],['profile','প্রোফাইল','user']];
+  var cur = 'home';
+  function go(v){ cur = v; window.scrollTo(0,0); draw(); }
+  function draw(){
+    document.getElementById('app').innerHTML = V[cur]();
+    document.getElementById('nav').innerHTML = NAV.map(function(n){
+      var on = n[0]===cur || (cur==='withdraw'&&n[0]==='wallet') || (cur==='referral'&&n[0]==='profile') || false;
+      return '<button data-nav="'+n[0]+'" class="'+(on?'on':'')+'">'+ic(n[2])+n[1]+'</button>'}).join('');
+    document.querySelectorAll('[data-nav]').forEach(function(b){b.onclick=function(){go(b.dataset.nav)}});
+    document.querySelectorAll('[data-soon]').forEach(function(b){b.onclick=function(){toast(soon)}});
+    document.querySelectorAll('[data-f]').forEach(function(b){b.onclick=function(){S.f=b.dataset.f;draw()}});
+    var cp=document.getElementById('cp'); if(cp) cp.onclick=function(){var i=document.getElementById('rl');i.select();try{navigator.clipboard.writeText(i.value)}catch(e){document.execCommand('copy')}toast('লিংক কপি হয়েছে')};
+    var sb=document.getElementById('sub'); if(sb) sb.onclick=function(){toast(soon)}; // server validates balance and creates the request
+  }
+  draw();
+})();
+</script>
