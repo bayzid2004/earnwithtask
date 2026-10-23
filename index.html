@@ -159,7 +159,7 @@ button:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
   if (tg && tg.initData){
     fetch(API + '/api/me', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({initData:tg.initData})})
       .then(function(r){return r.json()})
-      .then(function(d){ if (d && d.ok){ S.name = ((d.user.first_name||'')+' '+(d.user.last_name||'')).trim(); S.id = String(d.user.id); S.ver = true; draw(); } })
+      .then(function(d){ if (d && d.ok){ S.name = ((d.user.first_name||'')+' '+(d.user.last_name||'')).trim(); S.id = String(d.user.id); S.ver = true; if (typeof d.points === 'number') S.points = d.points; draw(); } })
       .catch(function(){});
   }
 })();
