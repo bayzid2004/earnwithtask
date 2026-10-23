@@ -118,7 +118,7 @@ button:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
     tasks:function(){return top('টাস্ক')+'<div class="list">'+S.tasks.map(function(k){
       return '<div class="row"><span class="i">'+ic('task')+'</span><div>'+k.t+'<small>+'+bn(k.p)+' পয়েন্ট</small></div><button class="btn sm" data-soon>শুরু করুন</button></div>'}).join('')+'</div>'},
 
-    referral:function(){var link='https://t.me/earnwithtask2bot?start=ref_'+(S.id||'0000');
+    referral:function(){var link='https://t.me/earnwithtask2bot/app?startapp=ref_'+(S.id||'0000');
       return top('রেফারেল প্রোগ্রাম','home')+'<div class="stats"><div class="card"><b>'+bn(S.refs)+'</b><small>আমন্ত্রিত বন্ধু</small></div><div class="card"><b>'+bn(S.refPts)+'</b><small>রেফারেল থেকে পয়েন্ট</small></div></div>'
       +'<div class="card"><label style="margin-top:0">আপনার রেফারেল লিংক</label><div class="copy"><input id="rl" readonly value="'+link+'"><button class="btn sm" id="cp">কপি</button></div></div>'
       +'<h3>কীভাবে কাজ করে</h3><div class="list"><div class="row"><span class="i">'+ic('copy')+'</span><div>লিংক শেয়ার করুন<small>বন্ধুকে আপনার লিংক পাঠান</small></div></div><div class="row"><span class="i">'+ic('user')+'</span><div>বন্ধু জয়েন করবে<small>বট চালু করলে গণনা শুরু</small></div></div><div class="row"><span class="i">'+ic('wallet')+'</span><div>পয়েন্ট পাবেন<small>যাচাইয়ের পর যোগ হবে</small></div></div></div>'},
@@ -162,6 +162,8 @@ button:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
     if (typeof d.points === 'number') S.points = d.points;
     if (typeof d.streak === 'number') S.streak = d.streak;
     if (typeof d.bonusReady === 'boolean') S.bonusReady = d.bonusReady;
+    if (typeof d.refs === 'number') S.refs = d.refs;
+    if (typeof d.refPts === 'number') S.refPts = d.refPts;
     if (d.tx) S.tx = d.tx.map(function(t){return {title:t.title, pts:t.pts, time:t.at?new Date(t.at).toLocaleString('bn-BD',{dateStyle:'medium',timeStyle:'short'}):''}});
   }
   function call(path){
