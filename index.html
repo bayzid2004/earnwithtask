@@ -65,7 +65,7 @@ nav{position:fixed;left:0;right:0;bottom:0;background:rgba(7,11,20,.92);backdrop
 nav div{display:flex;gap:4px;max-width:480px;margin:0 auto}
 nav button{flex:1;color:var(--mute);font-size:11px;font-weight:500;display:flex;flex-direction:column;align-items:center;gap:4px;padding:7px 0;border-radius:12px;border:1px solid transparent}
 nav button.on{color:var(--cy);background:rgba(31,162,255,.1);border-color:var(--cy);box-shadow:0 0 14px var(--glow)}
-#toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--card2);border:1px solid var(--line);padding:9px 14px;border-radius:10px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s;white-space:nowrap}
+#toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:var(--card2);border:1px solid var(--line);padding:9px 14px;border-radius:10px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s;white-space:normal;max-width:90vw;text-align:center}
 #toast.on{opacity:1}
 button:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
 </style>
@@ -95,7 +95,7 @@ button:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
     help:'M12 3a9 9 0 100 18 9 9 0 000-18M9.5 9.5a2.5 2.5 0 114 2c-1 .7-1.5 1-1.5 2.5M12 17h.01',
     doc:'M8 4h8l3 3v13H5V7zM9 12h6M9 16h4', copy:'M8 8h11v12H8zM5 16V4h11', chat:'M4 5h16v11H9l-5 4z'};
   var ic = function(k,c){return '<svg class="ic" viewBox="0 0 24 24"'+(c?' style="'+c+'"':'')+'><path d="'+P[k]+'"/></svg>'};
-  var toast = function(m){var t=document.getElementById('toast');t.textContent=m;t.className='on';setTimeout(function(){t.className=''},1800)};
+  var toast = function(m){var t=document.getElementById('toast');t.textContent=m;t.className='on';setTimeout(function(){t.className=''},3500)};
   var soon = 'এই অংশ পরের ধাপে সার্ভারের সঙ্গে যুক্ত হবে';
 
   var txRows = function(a){return a.length ? '<div class="list">'+a.map(function(t){
@@ -108,7 +108,7 @@ button:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
 
   var V = {
     home:function(){return '<header><div class="av">'+(S.name?S.name[0].toUpperCase():'E')+'</div><div class="me"><b>'+(S.name||'Earn With Task')+'</b><span>'+ic('wallet')+bn(S.points)+'</span></div><button class="sq" data-soon aria-label="নোটিফিকেশন">'+ic('bell')+'</button></header>'
-      +'<section class="banner"><h2>প্রতিদিন বোনাস জিতুন!</h2><p>ডেইলি বোনাস নিন, টাস্ক করুন, পয়েন্ট বাড়ান।</p><button class="go" data-soon>বোনাস নিন ›</button><svg class="coin" viewBox="0 0 80 80"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE27A"/><stop offset="1" stop-color="#F59E0B"/></linearGradient></defs><circle cx="40" cy="40" r="34" fill="url(#g)"/><circle cx="40" cy="40" r="26" fill="none" stroke="#B45309" stroke-opacity=".5" stroke-width="3"/><path d="M40 24l9 12-9 20-9-20z" fill="#fff" fill-opacity=".85"/></svg></section>'
+      +'<section class="banner"><h2>প্রতিদিন বোনাস জিতুন!</h2><p>ডেইলি বোনাস নিন, টাস্ক করুন, পয়েন্ট বাড়ান।</p><button class="go" id="bonus"'+(S.bonusReady===false?' disabled style="opacity:.6"':'')+'>'+(S.bonusReady===false?'আজকের বোনাস নেওয়া হয়েছে ✓':'বোনাস নিন ›')+'</button><svg class="coin" viewBox="0 0 80 80"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE27A"/><stop offset="1" stop-color="#F59E0B"/></linearGradient></defs><circle cx="40" cy="40" r="34" fill="url(#g)"/><circle cx="40" cy="40" r="26" fill="none" stroke="#B45309" stroke-opacity=".5" stroke-width="3"/><path d="M40 24l9 12-9 20-9-20z" fill="#fff" fill-opacity=".85"/></svg></section>'
       +goal()+'<h3>আয় করুন</h3><div class="grid">'+tile('g1','ads','ads','বিজ্ঞাপন দেখুন','দেখে পয়েন্ট পান')+tile('g2','tasks','task','টাস্ক','কাজ শেষে রিওয়ার্ড')+tile('g3','referral','ref','রেফারেল','বন্ধুকে ইনভাইট')+tile('g4','withdraw','out','উত্তোলন','আবেদন করুন')+'</div>'
       +'<h3>সাম্প্রতিক লেনদেন</h3>'+txRows(S.tx.slice(0,3))},
 
@@ -149,18 +149,32 @@ button:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
     document.querySelectorAll('[data-nav]').forEach(function(b){b.onclick=function(){go(b.dataset.nav)}});
     document.querySelectorAll('[data-soon]').forEach(function(b){b.onclick=function(){toast(soon)}});
     document.querySelectorAll('[data-f]').forEach(function(b){b.onclick=function(){S.f=b.dataset.f;draw()}});
+    var bb=document.getElementById('bonus'); if(bb) bb.onclick=claimBonus;
     var cp=document.getElementById('cp'); if(cp) cp.onclick=function(){var i=document.getElementById('rl');i.select();try{navigator.clipboard.writeText(i.value)}catch(e){document.execCommand('copy')}toast('লিংক কপি হয়েছে')};
     var sb=document.getElementById('sub'); if(sb) sb.onclick=function(){toast(soon)}; // server validates balance and creates the request
   }
   draw();
 
-  // Ask the server to verify the Telegram identity (server is the source of truth).
+  // Server is the source of truth for identity, points, streak and history.
   var API = 'https://earnwithtask-api.bayezidbosunia5.workers.dev';
-  if (tg && tg.initData){
-    fetch(API + '/api/me', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({initData:tg.initData})})
-      .then(function(r){return r.json()})
-      .then(function(d){ if (d && d.ok){ S.name = ((d.user.first_name||'')+' '+(d.user.last_name||'')).trim(); S.id = String(d.user.id); S.ver = true; if (typeof d.points === 'number') S.points = d.points; draw(); } })
-      .catch(function(){});
+  function apply(d){
+    S.name = ((d.user.first_name||'')+' '+(d.user.last_name||'')).trim(); S.id = String(d.user.id); S.ver = true;
+    if (typeof d.points === 'number') S.points = d.points;
+    if (typeof d.streak === 'number') S.streak = d.streak;
+    if (typeof d.bonusReady === 'boolean') S.bonusReady = d.bonusReady;
+    if (d.tx) S.tx = d.tx.map(function(t){return {title:t.title, pts:t.pts, time:t.at?new Date(t.at).toLocaleString('bn-BD',{dateStyle:'medium',timeStyle:'short'}):''}});
   }
+  function call(path){
+    return fetch(API+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData:tg.initData})}).then(function(r){return r.json()});
+  }
+  function claimBonus(){
+    if (!tg || !tg.initData) return toast('Telegram-এর ভেতর থেকে খুলুন');
+    call('/api/bonus').then(function(d){
+      if (d.user) apply(d);
+      if (d.ok) toast('+'+bn(d.reward)+' পয়েন্ট পেয়েছেন'); else toast(d.error==='already_claimed'?'আজকের বোনাস নেওয়া হয়ে গেছে':'ত্রুটি: '+(d.error||d.dbError||'unknown'));
+      draw();
+    }).catch(function(e){ toast('সংযোগ ত্রুটি: '+(e&&e.message||'network')); });
+  }
+  if (tg && tg.initData){ call('/api/me').then(function(d){ if (d && d.user){ apply(d); draw(); } }).catch(function(){}); }
 })();
 </script>
