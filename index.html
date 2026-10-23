@@ -134,7 +134,7 @@ button:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
       +'<p class="note">অ্যাডমিন যাচাইয়ের পর পেমেন্ট করা হবে।'+(ok?'':' ন্যূনতম '+bn(MIN)+' পয়েন্ট জমলে আবেদন করতে পারবেন।')+'</p></div>'
       +'<button class="btn" id="sub"'+(ok?'':' disabled')+'>আবেদন জমা দিন</button>'},
 
-    profile:function(){return top('প্রোফাইল')+'<div class="card" style="display:flex;gap:12px;align-items:center"><div class="av" style="width:52px;height:52px;font-size:20px">'+(S.name?S.name[0].toUpperCase():'E')+'</div><div><b>'+(S.name||'Earn With Task ব্যবহারকারী')+'</b><div class="note" style="margin:2px 0 0">ID: '+(S.id||'—')+'</div></div></div>'
+    profile:function(){return top('প্রোফাইল')+'<div class="card" style="display:flex;gap:12px;align-items:center"><div class="av" style="width:52px;height:52px;font-size:20px">'+(S.name?S.name[0].toUpperCase():'E')+'</div><div><b>'+(S.name||'Earn With Task ব্যবহারকারী')+'</b><div class="note" style="margin:2px 0 0">ID: '+(S.id||'—')+(S.ver?' · ✓ সার্ভারে যাচাইকৃত':'')+'</div></div></div>'
       +'<div class="list"><button class="row" data-nav="referral"><span class="i">'+ic('ref')+'</span><div>রেফারেল প্রোগ্রাম</div></button><button class="row" data-soon><span class="i">'+ic('chat')+'</span><div>সাপোর্ট<small>সমস্যা জানান</small></div></button><button class="row" data-soon><span class="i">'+ic('doc')+'</span><div>নিয়মাবলি ও গোপনীয়তা</div></button><button class="row" data-soon><span class="i">'+ic('help')+'</span><div>কীভাবে কাজ করে</div></button></div>'}
   };
 
@@ -153,5 +153,14 @@ button:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
     var sb=document.getElementById('sub'); if(sb) sb.onclick=function(){toast(soon)}; // server validates balance and creates the request
   }
   draw();
+
+  // Ask the server to verify the Telegram identity (server is the source of truth).
+  var API = 'https://earnwithtask-api.bayezidbosunia5.workers.dev';
+  if (tg && tg.initData){
+    fetch(API + '/api/me', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({initData:tg.initData})})
+      .then(function(r){return r.json()})
+      .then(function(d){ if (d && d.ok){ S.name = ((d.user.first_name||'')+' '+(d.user.last_name||'')).trim(); S.id = String(d.user.id); S.ver = true; draw(); } })
+      .catch(function(){});
+  }
 })();
 </script>
