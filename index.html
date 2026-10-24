@@ -1,6 +1,7 @@
 <!-- Earn With Task Mini App v5: all pages, same dark neon design (frontend only, demo data) -->
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src='//libtl.com/sdk.js' data-zone='12106022' data-sdk='show_12106022'></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* hide Blogger chrome (watermark, navbar, header, footer, sidebar) */
@@ -112,8 +113,8 @@ button:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
       +goal()+'<h3>আয় করুন</h3><div class="grid">'+tile('g1','ads','ads','বিজ্ঞাপন দেখুন','দেখে পয়েন্ট পান')+tile('g2','tasks','task','টাস্ক','কাজ শেষে রিওয়ার্ড')+tile('g3','referral','ref','রেফারেল','বন্ধুকে ইনভাইট')+tile('g4','withdraw','out','উত্তোলন','আবেদন করুন')+'</div>'
       +'<h3>সাম্প্রতিক লেনদেন</h3>'+txRows(S.tx.slice(0,3))},
 
-    ads:function(){return top('বিজ্ঞাপন দেখুন')+'<div class="card" style="text-align:center"><div class="big">'+bn(S.today)+' / '+bn(10)+'</div><div class="note" style="margin:4px 0 0">আজকের দেখা বিজ্ঞাপন</div><div class="bar" style="margin-top:14px"><div style="width:'+(S.today*10)+'%"></div></div></div>'
-      +'<button class="btn" data-soon>'+ic('ads')+'বিজ্ঞাপন দেখুন</button><p class="note">বিজ্ঞাপন শেষ পর্যন্ত দেখলে সার্ভার যাচাই করে পয়েন্ট যোগ করবে।</p>'},
+    ads:function(){return top('বিজ্ঞাপন দেখুন')+'<div class="card" style="text-align:center"><div class="big">'+bn(S.adsToday||0)+' / '+bn(S.adLimit||10)+'</div><div class="note" style="margin:4px 0 0">আজকের দেখা বিজ্ঞাপন</div><div class="bar" style="margin-top:14px"><div style="width:'+Math.min(100,(S.adsToday||0)/(S.adLimit||10)*100)+'%"></div></div></div>'
+      +'<button class="btn" id="watch">'+ic('ads')+'বিজ্ঞাপন দেখুন</button><p class="note">বিজ্ঞাপন দেখা শেষ হলে সার্ভার যাচাই করে পয়েন্ট যোগ করবে।</p>'},
 
     tasks:function(){return top('টাস্ক')+'<div class="list">'+S.tasks.map(function(k){
       return '<div class="row"><span class="i">'+ic('task')+'</span><div>'+k.t+'<small>+'+bn(k.p)+' পয়েন্ট</small></div><button class="btn sm" data-soon>শুরু করুন</button></div>'}).join('')+'</div>'},
@@ -149,6 +150,7 @@ button:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
     document.querySelectorAll('[data-nav]').forEach(function(b){b.onclick=function(){go(b.dataset.nav)}});
     document.querySelectorAll('[data-soon]').forEach(function(b){b.onclick=function(){toast(soon)}});
     document.querySelectorAll('[data-f]').forEach(function(b){b.onclick=function(){S.f=b.dataset.f;draw()}});
+    var wb=document.getElementById('watch'); if(wb) wb.onclick=watchAd;
     var bb=document.getElementById('bonus'); if(bb) bb.onclick=claimBonus;
     var cp=document.getElementById('cp'); if(cp) cp.onclick=function(){var i=document.getElementById('rl');i.select();try{navigator.clipboard.writeText(i.value)}catch(e){document.execCommand('copy')}toast('লিংক কপি হয়েছে')};
     var sb=document.getElementById('sub'); if(sb) sb.onclick=function(){toast(soon)}; // server validates balance and creates the request
@@ -162,12 +164,30 @@ button:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
     if (typeof d.points === 'number') S.points = d.points;
     if (typeof d.streak === 'number') S.streak = d.streak;
     if (typeof d.bonusReady === 'boolean') S.bonusReady = d.bonusReady;
+    if (typeof d.adsToday === 'number') S.adsToday = d.adsToday;
+    if (typeof d.adLimit === 'number') S.adLimit = d.adLimit;
     if (typeof d.refs === 'number') S.refs = d.refs;
     if (typeof d.refPts === 'number') S.refPts = d.refPts;
     if (d.tx) S.tx = d.tx.map(function(t){return {title:t.title, pts:t.pts, time:t.at?new Date(t.at).toLocaleString('bn-BD',{dateStyle:'medium',timeStyle:'short'}):''}});
   }
   function call(path){
     return fetch(API+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({initData:tg.initData})}).then(function(r){return r.json()});
+  }
+  var adBusy = false;
+  function watchAd(){
+    if (adBusy) return;
+    if (!tg || !tg.initData) return toast('Telegram-এর ভেতর থেকে খুলুন');
+    if (typeof window.show_12106022 !== 'function') return toast('বিজ্ঞাপন এখনো লোড হয়নি');
+    adBusy = true; var before = S.points;
+    call('/api/ad/start').then(function(d){
+      if (!d.ok) { toast(d.error==='limit' ? 'আজকের বিজ্ঞাপনের সীমা শেষ' : 'ত্রুটি: '+(d.error||d.dbError||'unknown')); return; }
+      return window.show_12106022({ymid:d.ymid, requestVar:'watch_ads'}).then(function(){
+        return new Promise(function(ok){ setTimeout(ok, 1500); }); // give the server a moment to receive the confirmation
+      }).then(function(){ return call('/api/me'); }).then(function(m){
+        if (m && m.user){ apply(m); draw(); var gain=S.points-before; toast(gain>0 ? '+'+bn(gain)+' পয়েন্ট পেয়েছেন' : 'যাচাই চলছে, একটু পরে দেখুন'); }
+      });
+    }).catch(function(){ toast('এখন বিজ্ঞাপন পাওয়া যাচ্ছে না, পরে চেষ্টা করুন'); })
+      .then(function(){ adBusy = false; });
   }
   function claimBonus(){
     if (!tg || !tg.initData) return toast('Telegram-এর ভেতর থেকে খুলুন');
